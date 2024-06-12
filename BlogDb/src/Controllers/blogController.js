@@ -1,28 +1,58 @@
-//Create the blog (POST)
-const createBlog = (Blog) => async (req ,res) =>{
-    try{
-        const {title ,description ,author} = req.body;
-        const newBlog = new Blog({
-            title,
-            description,
-            author
-        });
+const { upload } = require("../Middlewares/mutler");
+const { cloudinary } = require("../Config/cloudinaryConfig");
+require('dotenv').config();
 
-        if(newBlog){
-            await newBlog.save();
-            res.status(201).json({
-                message : "Blog created successfully",
-                data : newBlog
-            });
-        }else{
-            res.status(400).json({
-                message : "Blog creation failed",
-            });
+//Create the blog (POST)
+const createBlog = (Blog) => async (req, res) => {
+  try {
+    await new Promise((resolve, reject) => {
+      upload.single('blogImage')(req, res, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
         }
-    }catch(err){
-        console.log(`Error : ${e}`);
+      });
+    });
+
+    const { title, description, author } = req.body;
+    let blogImage;
+
+    if (req.file) {
+      // Upload the image to Cloudinary
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        upload_preset: process.env.UPLOAD_PRESET,
+      });
+      blogImage = result.secure_url;
+    } else {
+      blogImage = null;
     }
-}
+
+    const newBlog = new Blog({
+      title,
+      description,
+      author,
+      blogImage,
+    });
+
+    await newBlog.save();
+
+    res.status(201).json({
+      message: 'Blog created successfully',
+      data: newBlog,
+    });
+  } catch (e) {
+    console.log(`Error : ${e}`);
+    res.status(500).json({
+      message: 'Error creating blog',
+      error: e.message,
+    });
+  }
+};
+
+module.exports = createBlog;
+
+// Rest of the code remains the same
 
 //Get all the blogs (GET)
 const getAllBlogs = (Blog) => async (req ,res) =>{
