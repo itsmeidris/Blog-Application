@@ -20,6 +20,7 @@ app.use(express.json());
 //Blog Database Connection
 blogDataBaseConnection();
 
+
 //Using the main router of our application (API)
 app.use('/blogs',blogRouter);
 
