@@ -1,11 +1,17 @@
 import axios from 'axios';
 
-const postData = async (title, description, author) => {
+const postData = async (title, description, author ,blogImage) => {
     try {
-      const response = await axios.post(`http://localhost:1368/blogs/create`, {
-        title,
-        description,
-        author,
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('author', author);
+      formData.append('blogImage', blogImage);
+
+      const response = await axios.post(`http://localhost:1368/blogs/create`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       });
       
       if (response.status === 201) {

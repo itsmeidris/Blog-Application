@@ -16,7 +16,7 @@ const createBlog = (Blog) => async (req, res) => {
     });
 
     const { title, description, author } = req.body;
-    let blogImage;
+    let blogImage = null;
 
     if (req.file) {
       // Upload the image to Cloudinary
@@ -49,10 +49,6 @@ const createBlog = (Blog) => async (req, res) => {
     });
   }
 };
-
-module.exports = createBlog;
-
-// Rest of the code remains the same
 
 //Get all the blogs (GET)
 const getAllBlogs = (Blog) => async (req ,res) =>{

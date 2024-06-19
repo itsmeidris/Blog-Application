@@ -57,7 +57,8 @@ function BlogsPage() {
                 key = {i}
                 title = {blog.title}
                 description = {blog.description}
-                author = {blog.author}/>
+                author = {blog.author}
+                blogImage = {blog.blogImage}/>
               )
             }) 
           }
